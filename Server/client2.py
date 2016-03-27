@@ -21,7 +21,7 @@ ls='NO'
 
 def getCPUtemp():
 	res=os.popen('vcgencmd measure_temp').readline()
-	return(res.replace("temp=","").replace("C\n",""))
+	return(res.replace("temp=","").replace("'C\n",""))
 
 try:
 	import ibmiotf.application
@@ -88,15 +88,17 @@ while(1):
                 GPIO.output(5,1)
                 time.sleep(0.1)
                 GPIO.output(5,0)
-                ls = "YES"
-                temp=getCPUtemp()
+                ls = "YES"              
                 content=ser.read(1)
-                data={'REQUEST': ls, 'LEVEL': content, 'TEMP': temp}
+                data={'REQUEST': ls, 'LEVEL': content}
                 deviceCli.publishEvent("status","json", data)
                 
         else:
                 ls = "NO"
                 content=0
+        temp=float(getCPUtemp())
+        data={'Temp': temp}
+        deviceCli.publishEvent("status","json", data)
         time.sleep(1)
     	
 
